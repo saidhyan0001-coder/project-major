@@ -8,13 +8,14 @@
 | Frontend tests | PASS | `npm run test -- --run` — 2 passed |
 | Frontend production build | PASS | `npm run build` — TypeScript and Vite build succeeded |
 | Frontend dependency audit | PASS | `npm audit` — 0 vulnerabilities |
+| Backend dependency audit | PASS | `pip-audit -r backend/requirements.txt` — no known vulnerabilities |
 | Git whitespace check | PASS | `git diff --check` |
 | Local API | PASS | `http://127.0.0.1:8011/api/v1/health` returned `{"status":"ok","service":"hotel-ordering-api"}` |
 | Browser order workflow | PASS | Menu loaded, item added, server-priced order confirmed, then private-token tracking verified after reload |
 | Assistant workflow | PASS | Chat generated an unplaced draft; entering guest details later and explicitly confirming successfully placed the order |
 | Database migration | PASS, limited | Alembic upgrade succeeded against a fresh SQLite database |
 
-The Python test run reports one upstream Starlette/AnyIO deprecation warning; it does not fail the suite.
+The backend test run reports an upstream Starlette `httpx`-based `TestClient` deprecation warning; it does not fail the suite.
 
 ## Blocked or not run
 
