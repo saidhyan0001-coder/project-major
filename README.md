@@ -8,8 +8,9 @@ Guest-facing hotel room-service ordering with a React + TypeScript website, Fast
 - Gemini calls are made only by the backend when `LLM_PROVIDER=gemini`; model ID and key are server configuration. A missing key/model yields an explicit API error, never a pretend AI answer.
 - Browser voice uses the browser's Web Speech recognition/synthesis capability where supported. It is not a telephone integration, and browser speech services may process audio according to browser/vendor policies.
 - AprilTag detection is an optional separate OpenCV + `pupil-apriltags` camera helper, based on the sample approach linked in [the user-provided repository](https://github.com/saidhyan0001-coder/aprila-tag). Camera hardware was not available for validation in this environment. A recorded API observation is matched against a staff-configured room/floor/tag registry. It does not control a robot.
-- The backend starts in development mode with a sample menu. Replace it and configure real credentials before deployment.
-- Hosted Gemini, Raspberry Pi camera, PostgreSQL production, Vercel deployment, phone calls, and hotel identity/PMS integrations require external credentials/hardware and have not been claimed as live.
+- Public Vercel preview: [project-major-tau.vercel.app](https://project-major-tau.vercel.app). The frontend and API are deployed together and use the mock assistant without requiring a Gemini key.
+- The Vercel preview currently uses SQLite under `/tmp`, which is temporary serverless storage. Do not use it for real guest orders; data is not durable. Configure PostgreSQL and run migrations before production use.
+- Gemini, Raspberry Pi camera, phone calls, and hotel identity/PMS integrations require external credentials/hardware and are not active in the hosted preview.
 
 ## Requirements
 
