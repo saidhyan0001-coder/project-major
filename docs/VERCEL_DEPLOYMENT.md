@@ -1,22 +1,19 @@
-# Vercel frontend deployment
+# Vercel deployment
 
-Vercel deployment is **not performed by this repository configuration alone**. It requires the owner to connect the GitHub repository and provide Vercel account/project permissions, plus a separately hosted HTTPS API.
+The repository root `vercel.json` configures Vercel Services to deploy the Vite frontend and FastAPI backend together. The frontend uses same-origin `/api/v1/...` requests in production; local development continues to use `http://localhost:8000`.
 
 ## Configure
 
-1. Deploy FastAPI and PostgreSQL on a supported backend provider first. Apply Alembic migrations before accepting requests.
-2. In Vercel, import `saidhyan0001-coder/project-major` and set the project **Root Directory** to `frontend`.
-3. `frontend/vercel.json` declares Vite build and `dist` output.
-4. Set Vercel build environment variable `VITE_API_BASE_URL=https://<your-api-host>` (public URL only, no trailing slash recommended).
-5. On backend host set `CORS_ORIGINS=https://<your-vercel-domain>` and production secrets: `GEMINI_API_KEY`, `GEMINI_MODEL`, `STAFF_API_TOKEN`, `APRILTAG_REPORT_TOKEN`, `DATABASE_URL`, `APP_ENV=production`, `LLM_PROVIDER=gemini`.
-6. Confirm browser requests reach HTTPS API and no secrets appear in built frontend assets, logs, or browser requests.
-7. Deploy preview first; run manual guest/staff, security, voice, and error checks; then promote production.
+1. Import `saidhyan0001-coder/project-major` in Vercel and select the detected multi-service project.
+2. Use the repository root `vercel.json` service definitions and deploy.
+3. The app runs without a Gemini key using its explicit mock provider. To enable Gemini later, set `LLM_PROVIDER=gemini`, `GEMINI_API_KEY`, and an available `GEMINI_MODEL` as backend-only secrets.
+4. Before real orders, configure a persistent PostgreSQL database and apply Alembic migrations. Do not use the default SQLite database for production on serverless infrastructure; instance-local files are not durable.
+5. Set strong backend-only `STAFF_API_TOKEN` and `APRILTAG_REPORT_TOKEN` secrets before enabling staff or camera features.
+6. Test the deployed `/api/v1/health`, menu, guest order, and private-token tracking workflows before sharing the app.
 
 ## Important
 
-- Do not set any API key or staff/camera token as a Vercel `VITE_*` variable.
-- A deployed frontend without a deployed API is not an operational app.
+- No Gemini, staff, or camera credentials are required to deploy the public guest UI and mock assistant. Until a Gemini key is configured, this is not a Gemini-backed assistant.
+- The default SQLite storage is suitable for local development only. A Vercel deployment using SQLite must be treated as a non-production preview: data can be lost across function instances/redeployments.
+- Do not set any API key or staff/camera token as a `VITE_*` variable.
 - HTTPS is required for microphone APIs in production; localhost is also treated as a secure context for development.
-- Set permitted origins explicitly; do not use wildcard CORS.
-- Configure Vercel environment variables separately for Preview and Production as needed.
-- No Vercel token/domain/production deployment URL was present during this work, so deployment status must remain `BLOCKED` until someone with account access performs it.
