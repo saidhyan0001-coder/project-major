@@ -7,7 +7,7 @@
     "frontend": "cd frontend && npm run dev -- --host 0.0.0.0 --port 5173",
     "test": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"$env:PYTHONPATH='backend'; pytest backend/tests --maxfail=1; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; Set-Location 'frontend'; npm run test -- --run\"",
     "lint": "python -m compileall backend && cd frontend && npm run build",
-    "db:migrate": "cd backend && python -m app.db init-db",
+    "db:migrate": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"$env:PYTHONPATH='backend'; alembic -c backend/alembic.ini upgrade head\"",
     "health": "curl -fsS http://localhost:8000/health",
     "cleanup": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"if (Test-Path node_modules) { Remove-Item -Recurse -Force node_modules }; if (Test-Path frontend/node_modules) { Remove-Item -Recurse -Force frontend/node_modules }; Get-ChildItem -Path . -Recurse -Filter __pycache__ -Force | Remove-Item -Recurse -Force; Get-ChildItem -Path . -Recurse -Filter *.pyc -Force | Remove-Item -Force\""
   },

@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-python -m venv .venv
-if [ -f .venv/Scripts/activate ]; then
-  . .venv/Scripts/activate
-elif [ -f .venv/bin/activate ]; then
-  . .venv/bin/activate
+python3.11 -m venv .venv
+. .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r backend/requirements.txt
+npm ci
+npm ci --prefix frontend
+if [ ! -f .env ]; then
+  cp .env.example .env
 fi
-
-pip install --upgrade pip
-pip install -r backend/requirements.txt
-npm install --prefix frontend
-python -m app.db init-db || true
-printf '\nSetup complete. Run: npm run dev\n'
+export PYTHONPATH=backend
+alembic -c backend/alembic.ini upgrade head
+printf '\nSetup complete. Activate the venv, configure .env, then run npm run dev.\n'

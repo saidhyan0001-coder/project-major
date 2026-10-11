@@ -1,42 +1,21 @@
-# Implementation Plan
+# Implementation record
 
-## Phase 1: repo and runtime setup
+## Completed locally
 
-- Validate Python and Node runtimes
-- Create project structure
-- Add environment templates and setup scripts
-- Document the architecture and API contract
+- Audited the existing prototype and switched the product scope from robot-delivery mockup to guest hotel ordering/assistant.
+- Added a server-owned catalog, price preview, order creation, explicit confirmation, hash-only private tracking credentials, cancellation, state validation, and authenticated staff APIs.
+- Added text conversation, deterministic attack screening, metadata-only security events, explicit mock provider and Google Gen AI Gemini provider with structured response checks and bounded retry.
+- Added browser speech recognition and speech synthesis controls with permission/provider limits explained.
+- Added AprilTag room/floor mappings and authenticated observation API with exact tag-family/id and confidence validation, plus standalone OpenCV camera helper.
+- Added Alembic baseline/legacy schema adaptation, backend/frontend tests, Vercel project config and Pi/deployment/handoff documents.
 
-## Phase 2: backend foundation
+## Remaining operational work
 
-- Add FastAPI app, SQLAlchemy models, and session setup
-- Implement order lifecycle rules and business validation
-- Add delivery-task creation rules and room verification guard rails
-- Add health, readiness, robot status, and voice routes
+- Apply actual hotel menu, brand, identity and retention policies.
+- Supply valid Gemini model/key and production backend secrets.
+- Select a PostgreSQL/API hosting provider and run backup/restore/monitoring checks.
+- Verify optional camera integration with real Pi/camera/printed markers.
+- Connect repository to Vercel with owner permissions and deploy frontend against live HTTPS backend.
+- Replace shared staff token and in-process rate limiter with production identity/gateway controls.
 
-## Phase 3: frontend experience
-
-- Build a Vite React TypeScript dashboard
-- Add order form and order action controls
-- Display robot status, order queue, and delivery tasks
-- Add client-side error handling and status messaging
-
-## Phase 4: test automation and verification
-
-- Validate backend API flow with pytest
-- Validate frontend rendering with Vitest and Testing Library
-- Run the application locally and check health endpoints
-- Confirm the order-to-delivery workflow and constrained task creation rules
-
-## Phase 5: deployment and extension
-
-- Add Docker Compose support for local startup
-- Document real robot and telephony integration contracts
-- Replace mock adapters with validated external integrations when hardware or credentials become available
-
-## Protected constraints
-
-- No direct robot motor control from website or LLM
-- No fake success responses in production mode
-- No delivery completion without verified room confirmation
-- No hardcoded room coordinates or direct map assumptions
+The executed commands and evidence statuses are in `FINAL_VERIFICATION_REPORT.md`.

@@ -1,33 +1,37 @@
-from __future__ import annotations
-
 from datetime import datetime
-from typing import List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class OrderItemBase(BaseModel):
-    name: str
-    quantity: int = Field(default=1, ge=1)
-    unit_price: float = Field(default=0.0, ge=0)
-
-
-class OrderItemCreate(OrderItemBase):
-    pass
-
-
-class OrderItemRead(OrderItemBase):
+class MenuItemRead(BaseModel):
     id: int
-    order_id: int
+    name: str
+    category: str
+    description: str
+    unit_price: float
+    available: bool
     model_config = ConfigDict(from_attributes=True)
 
 
-class OrderCreate(BaseModel):
-    guest_name: str
-    room_number: str
-    order_type: str = "food"
-    notes: Optional[str] = None
-    items: List[OrderItemCreate]
+class GuestOrderItemCreate(BaseModel):
+    menu_item_id: int
+    quantity: int = Field(ge=1, le=20)
+
+
+class GuestOrderCreate(BaseModel):
+    guest_name: str = Field(min_length=1, max_length=120)
+    room_number: str = Field(min_length=1, max_length=50)
+    notes: str | None = Field(default=None, max_length=1000)
+    items: list[GuestOrderItemCreate] = Field(min_length=1, max_length=30)
+
+
+class OrderItemRead(BaseModel):
+    id: int
+    menu_item_id: int | None
+    name: str
+    quantity: int
+    unit_price: float
+    model_config = ConfigDict(from_attributes=True)
 
 
 class OrderRead(BaseModel):
@@ -37,84 +41,69 @@ class OrderRead(BaseModel):
     order_type: str
     status: str
     total_amount: float
-    notes: Optional[str] = None
+    notes: str | None = None
     created_at: datetime
     updated_at: datetime
-    items: List[OrderItemRead]
+    items: list[OrderItemRead]
     model_config = ConfigDict(from_attributes=True)
 
 
-class OrderStatusUpdate(BaseModel):
-    status: str
+class OrderCreated(OrderRead):
+    tracking_token: str
 
 
-class DeliveryTaskCreate(BaseModel):
-    order_id: int
-    robot_name: str = "mock-robot-01"
-    room_tag_id: str | None = None
-    estimated_eta_minutes: int = 12
+class OrderConfirm(BaseModel):
+    tracking_token: str = Field(min_length=20, max_length=100)
 
 
-class DeliveryTaskUpdate(BaseModel):
-    status: str = "queued"
-    room_verification_passed: bool | None = None
-    room_tag_id: str | None = None
-    robot_name: str | None = None
+class OrderTrack(BaseModel):
+    tracking_token: str = Field(min_length=20, max_length=100)
 
 
-class DeliveryTaskRead(BaseModel):
-    id: int
-    order_id: int
-    robot_name: str
-    room_tag_id: str | None = None
-    status: str
-    room_verification_passed: bool
-    estimated_eta_minutes: int | None = None
-    delivered_at: datetime | None = None
-    created_at: datetime
-    updated_at: datetime
-    model_config = ConfigDict(from_attributes=True)
+class ConversationCreate(BaseModel):
+    guest_name: str | None = Field(default=None, max_length=120)
+    room_number: str | None = Field(default=None, max_length=50)
 
 
-class RobotStatusRead(BaseModel):
-    id: int | None = None
-    state: str
-    location: str | None = None
-    battery_level: int
-    last_updated: datetime | None = None
-    model_config = ConfigDict(from_attributes=True)
+class ConversationMessage(BaseModel):
+    text: str = Field(min_length=1, max_length=2000)
 
 
-class RobotStatusUpdate(BaseModel):
-    state: str = "idle"
-    location: str | None = None
-    battery_level: int = 100
+class ConversationOrderConfirm(BaseModel):
+    text: str = Field(min_length=1, max_length=20)
+    guest_name: str | None = Field(default=None, max_length=120)
+    room_number: str | None = Field(default=None, max_length=50)
 
 
-class VoiceSessionCreate(BaseModel):
-    guest_name: str | None = None
-    channel: str = "phone"
+class ProposedItem(BaseModel):
+    menu_item_id: int
+    name: str
+    quantity: int = Field(ge=1, le=20)
+    unit_price: float
 
 
-class VoiceSessionRead(BaseModel):
-    id: int
-    session_id: str
-    channel: str
-    guest_name: str | None = None
-    status: str
-    transcript: str | None = None
-    created_at: datetime
-    updated_at: datetime
-    model_config = ConfigDict(from_attributes=True)
-
-
-class VoicePrompt(BaseModel):
-    session_id: str
-    text: str
-
-
-class VoicePromptResponse(BaseModel):
+class ConversationReply(BaseModel):
     session_id: str
     response: str
-    order_created: bool = False
-    order_id: int | None = None
+    intent: str
+    proposed_items: list[ProposedItem] = Field(default_factory=list)
+    security_flagged: bool = False
+
+
+class StaffStatusUpdate(BaseModel):
+    status: str
+
+
+class RoomTagRegistration(BaseModel):
+    room_number: str = Field(min_length=1, max_length=50)
+    floor_id: str = Field(min_length=1, max_length=50)
+    tag_family: str = Field(min_length=1, max_length=40)
+    tag_id: int = Field(ge=0, le=65535)
+
+
+class AprilTagObservation(BaseModel):
+    room_number: str = Field(min_length=1, max_length=50)
+    floor_id: str = Field(min_length=1, max_length=50)
+    observed_family: str = Field(min_length=1, max_length=40)
+    observed_tag_id: int = Field(ge=0, le=65535)
+    decision_margin: float = Field(ge=0)

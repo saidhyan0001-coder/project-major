@@ -1,25 +1,26 @@
-version: '3.9'
-
 services:
   backend:
     image: python:3.11-slim
     working_dir: /app
     volumes:
       - .:/app
-    command: sh -c "pip install -r backend/requirements.txt && uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 --reload"
+    command: sh -c "pip install -r backend/requirements.txt && PYTHONPATH=/app/backend alembic -c backend/alembic.ini upgrade head && PYTHONPATH=/app/backend uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
     ports:
       - "8000:8000"
     environment:
-      DATABASE_URL: sqlite:///./backend/data/hotel.db
+      DATABASE_URL: sqlite:///./hotel.db
       APP_ENV: development
+      LLM_PROVIDER: mock
 
   frontend:
-    image: node:20-alpine
+    image: node:22-alpine
     working_dir: /app
     volumes:
       - ./frontend:/app
-    command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --port 5173"
+    command: sh -c "npm ci && npm run dev -- --host 0.0.0.0 --port 5173"
     ports:
       - "5173:5173"
     environment:
       VITE_API_BASE_URL: http://localhost:8000
+    depends_on:
+      - backend
