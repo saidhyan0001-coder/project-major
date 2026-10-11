@@ -1,0 +1,1 @@
+"""Hotel delivery backend package."""
