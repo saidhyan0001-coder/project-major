@@ -17,6 +17,8 @@
 
 The backend test run reports an upstream Starlette `httpx`-based `TestClient` deprecation warning; it does not fail the suite.
 
+GitHub reported 2 moderate Dependabot alerts after the push. The repository's Dependabot details page was unavailable in this session, while local `npm audit` and `pip-audit` checks (including the optional camera requirements) found no known vulnerabilities. Review the GitHub Security tab before production release to identify and resolve those remaining alerts.
+
 ## Blocked or not run
 
 - **Hosted Vercel deployment: BLOCKED.** No Vercel token/account authorization is configured. The backend also needs separate HTTPS hosting and its own deployment configuration.
